@@ -1,11 +1,13 @@
 import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+load_dotenv()
 
-# SQLALCHEMY_DATABASE_URL = os.environ.get("DATABASE_URL")
-SQLALCHEMY_DATABASE_URL = "postgresql://sumon:password%40123@localhost:5432/fastapi"
+SQLALCHEMY_DATABASE_URL = os.environ.get("DATABASE_URL")
+
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
