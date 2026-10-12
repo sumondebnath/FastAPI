@@ -8,7 +8,12 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
+    "asyncpg>=0.32.0",
     "fastapi[standard]>=0.142.2",
+    "psycopg>=3.3.6",
+    "psycopg2-binary>=2.9.13",
+    "pydantic-settings>=2.15.0",
+    "sqlalchemy[asyncio]>=2.1.4",
 ]
 
 [project.scripts]
