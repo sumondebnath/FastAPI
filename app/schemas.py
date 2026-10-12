@@ -7,13 +7,13 @@ class Post(BaseModel):
     author : str = Field(..., max_length=100)
 
 
-class PostCreate(BaseModel):
-    pass
+# class PostCreate(BaseModel):
+#     pass
 
-class PostResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+# class PostResponse(BaseModel):
+#     model_config = ConfigDict(from_attributes=True)
 
-    id = int
-    created_at = str
+#     id = int
+#     created_at = str
 
 
