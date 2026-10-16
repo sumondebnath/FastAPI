@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, status, HTTPException, Response
 from sqlalchemy.orm import Session
 
 import app.models as models
-from app.schemas import Post 
+from app.schemas import PostCreate, PostResponse
 from app.database import engine, get_db
 
 app = FastAPI()
@@ -11,10 +11,10 @@ models.Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def root():
-    return {"message": "Hello, World!"}
+    return {"message": "This is the root!"}
 
 
-@app.get("/posts")
+@app.get("/posts", response_model=list[PostResponse])
 def get_posts(db: Session = Depends(get_db)):
     posts = db.query(models.Post).all()
     # return posts
@@ -28,9 +28,9 @@ def get_post(post_id: int, db: Session = Depends(get_db)):
     return {"Post": post, "status_code": status.HTTP_200_OK}
 
 
-@app.post("/create/posts")
-def create_post(post: Post, db: Session = Depends(get_db)):
-    new_post = models.Post(title=post.title, content=post.content, author=post.author)
+@app.post("/create/posts", response_model=PostResponse)
+def create_post(post: PostCreate, db: Session = Depends(get_db)):
+    new_post = models.Post(**post.model_dump())
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
