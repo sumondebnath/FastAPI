@@ -17,28 +17,30 @@ def root():
 @app.get("/posts", response_model=list[PostResponse])
 def get_posts(db: Session = Depends(get_db)):
     posts = db.query(models.Post).all()
-    # return posts
-    return {"Posts": posts, "status_code": status.HTTP_200_OK}
+    return posts
+    # return {"Posts": posts, "status_code": status.HTTP_200_OK}
 
-@app.get("/posts/{post_id}")
+@app.get("/posts/{post_id}", response_model=PostResponse)
 def get_post(post_id: int, db: Session = Depends(get_db)):
     post = db.query(models.Post).filter(models.Post.id == post_id).first()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
-    return {"Post": post, "status_code": status.HTTP_200_OK}
+    # return {"Post": post, "status_code": status.HTTP_200_OK}
+    return post
 
 
-@app.post("/create/posts", response_model=PostResponse)
+@app.post("/posts", response_model=PostResponse)
 def create_post(post: PostCreate, db: Session = Depends(get_db)):
     new_post = models.Post(**post.model_dump())
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
-    return {"Post": new_post, "status_code": status.HTTP_201_CREATED}
+    # return {"Post": new_post, "status_code": status.HTTP_201_CREATED}
+    return new_post
 
 
-@app.put("/update/posts/{post_id}")
-def update_post(post_id:int, updated_post:Post, db:Session = Depends(get_db)):
+@app.put("/posts/{post_id}", response_model=PostResponse)
+def update_post(post_id:int, updated_post:PostCreate, db:Session = Depends(get_db)):
     post = db.query(models.Post).filter(models.Post.id == post_id)
     new_post = post.first()
     if not new_post:
@@ -53,10 +55,11 @@ def update_post(post_id:int, updated_post:Post, db:Session = Depends(get_db)):
 
     db.commit()
     db.refresh(new_post)
-    return {"Post": new_post, "status_code": status.HTTP_200_OK}
+    # return {"Post": new_post, "status_code": status.HTTP_200_OK}
+    return new_post
 
 
-@app.delete("/delete/posts/{post_id}")
+@app.delete("/posts/{post_id}")
 def delete_post(post_id:int, db:Session = Depends(get_db)):
     post = db.query(models.Post).filter(models.Post.id == post_id)
     deleted_post = post.first()
