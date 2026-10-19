@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, status, HTTPException, Response
 from sqlalchemy.orm import Session
 
 import app.models as models
-from app.schemas import PostCreate, PostResponse
+from app.schemas import PostCreate, PostResponse, UserCreate, UserResponse
 from app.database import engine, get_db
 
 app = FastAPI()
@@ -68,3 +68,18 @@ def delete_post(post_id:int, db:Session = Depends(get_db)):
     post.delete(synchronize_session=False)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+
+@app.get("/users", response_model=list[UserResponse])
+def get_users(db: Session = Depends(get_db)):
+    users = db.query(models.User).all()
+    return users
+
+@app.post("/users", status_code=status.HTTP_201_CREATED, response_model=UserResponse)
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    new_user = models.User(**user.model_dump())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
