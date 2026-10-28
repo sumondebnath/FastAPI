@@ -1,6 +1,6 @@
 from sqlalchemy.orm import relationship
 from app.database import Base
-from sqlalchemy import Column, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, text, TIMESTAMP
 
 
 # class User(Base):
@@ -21,3 +21,13 @@ class Post(Base):
     content = Column(Text, nullable=False) 
     # user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     author = Column(String, nullable=False)
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
