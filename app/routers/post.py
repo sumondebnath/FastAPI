@@ -4,16 +4,16 @@ from sqlalchemy.orm import Session
 from app import models, schemas, utils, database
 
 
-router = APIRouter()
+router = APIRouter(prefix="/posts", tags=["Posts"])
 
 
-@router.get("/posts", response_model=list[schemas.PostResponse])
+@router.get("/", response_model=list[schemas.PostResponse])
 def get_posts(db: Session = Depends(database.get_db)):
     posts = db.query(models.Post).all()
     return posts
     # return {"Posts": posts, "status_code": status.HTTP_200_OK}
 
-@router.get("/posts/{post_id}", response_model=schemas.PostResponse)
+@router.get("/{post_id}", response_model=schemas.PostResponse)
 def get_post(post_id: int, db: Session = Depends(database.get_db)):
     post = db.query(models.Post).filter(models.Post.id == post_id).first()
     if not post:
@@ -22,7 +22,7 @@ def get_post(post_id: int, db: Session = Depends(database.get_db)):
     return post
 
 
-@router.post("/posts", response_model=schemas.PostResponse)
+@router.post("/", response_model=schemas.PostResponse)
 def create_post(post: schemas.PostCreate, db: Session = Depends(database.get_db)):
     new_post = models.Post(**post.model_dump())
     db.add(new_post)
@@ -32,7 +32,7 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(database.get_db)
     return new_post
 
 
-@router.put("/posts/{post_id}", response_model=schemas.PostResponse)
+@router.put("/{post_id}", response_model=schemas.PostResponse)
 def update_post(post_id:int, updated_post:schemas.PostCreate, db:Session = Depends(database.get_db)):
     post = db.query(models.Post).filter(models.Post.id == post_id)
     new_post = post.first()
@@ -52,7 +52,7 @@ def update_post(post_id:int, updated_post:schemas.PostCreate, db:Session = Depen
     return new_post
 
 
-@router.delete("/posts/{post_id}")
+@router.delete("/{post_id}")
 def delete_post(post_id:int, db:Session = Depends(database.get_db)):
     post = db.query(models.Post).filter(models.Post.id == post_id)
     deleted_post = post.first()
